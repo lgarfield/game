@@ -1,7 +1,7 @@
 package slot
 
 import (
-
+	"math/rand"
 )
 
 type(
@@ -28,7 +28,7 @@ type(
 		normalPra []*NormalProbability
 
 		// 当前第几次
-		count uint8
+		count int32
 	}
 
 	NormalReturn struct {
@@ -44,6 +44,10 @@ type(
 		smallBonus uint8
 		// 大奖
 		bigBonus uint8
+	}
+
+	RewardInterface struct {
+
 	}
 )
 
@@ -91,7 +95,24 @@ func (n *Normal)Exec() (ret *NormalReturn, err error) {
 	}
 
 	// 筹码设定
+	if len := len(secondNormalPra); count >= len {
+		currentProbability := secondNormalPra[len - 1]
+	} else {
+		currentProbability := secondNormalPra[count - 1]
+	}
 
+	r := rand.New(rand.NewSource(99))
+	if fir := r.Intn(100); fir >= currentProbability.noBonus + currentProbability.smallBonus {
+		// Get the big bonus, create reward now
+		// first get the bonus interval
+		if sec := r.Intn(100);
+
+	} else if fir >= currentProbability.noBonus {
+		// Get the small bonus, create reward now
+		// first get the bonus interval
+	} else {
+		reward := 0
+	}
 
 	// 免费、奖金、技能、连赢等模式是否触发
 
