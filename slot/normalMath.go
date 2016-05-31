@@ -112,15 +112,15 @@ func (n *Normal)Exec() (ret *NormalReturn, err error) {
 
 	// 筹码设定
 	// Get current winning rate
+	// first get the multiple
+	multiple := n.singleUpper / (n.line * n.bet)
+
+
 	if len := len(secondNormalPra); count >= len {
 		currentProbability := secondNormalPra[len - 1]
 	} else {
 		currentProbability := secondNormalPra[count - 1]
 	}
-
-	// Get current bonus multiple
-	currentLastCorns := singleUpper - singleGot
-	maxMultiple := currentLastCorns / (bet * line)
 
 	if maxMultiple < BigBonusInterface[0].least {
 		currentProbability.smallBonus += currentProbability.bigBonus
@@ -136,11 +136,10 @@ func (n *Normal)Exec() (ret *NormalReturn, err error) {
 
 	}
 
-	r := rand.New(rand.NewSource(99))
-	if fir := r.Intn(100); fir >= currentProbability.noBonus + currentProbability.smallBonus {
+	if fir := rand.Intn(100); fir >= currentProbability.noBonus + currentProbability.smallBonus {
 		// Get the big bonus, create reward now
 		// first get the bonus interval
-		if sec := r.Intn(100);
+		if sec := rand.Intn(100);
 
 	} else if fir >= currentProbability.noBonus {
 		// Get the small bonus, create reward now
