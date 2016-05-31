@@ -29,6 +29,12 @@ type(
 
 		// 当前第几次
 		count int32
+
+		// line
+		line int
+
+		// bet/per
+		bet int
 	}
 
 	NormalReturn struct {
@@ -95,17 +101,19 @@ func (n *Normal)Exec() (ret *NormalReturn, err error) {
 	}
 
 	// 筹码设定
+	// first get the multiple
+	multiple := n.singleUpper / (n.line * n.bet)
+
 	if len := len(secondNormalPra); count >= len {
 		currentProbability := secondNormalPra[len - 1]
 	} else {
 		currentProbability := secondNormalPra[count - 1]
 	}
 
-	r := rand.New(rand.NewSource(99))
-	if fir := r.Intn(100); fir >= currentProbability.noBonus + currentProbability.smallBonus {
+	if fir := rand.Intn(100); fir >= currentProbability.noBonus + currentProbability.smallBonus {
 		// Get the big bonus, create reward now
 		// first get the bonus interval
-		if sec := r.Intn(100);
+		if sec := rand.Intn(100);
 
 	} else if fir >= currentProbability.noBonus {
 		// Get the small bonus, create reward now
