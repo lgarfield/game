@@ -29,6 +29,12 @@ type(
 
 		// 当前第几次
 		count int32
+
+		// single bet in this game
+		bet int
+
+		// num of line in this game
+		line int
 	}
 
 	NormalReturn struct {
@@ -46,8 +52,18 @@ type(
 		bigBonus uint8
 	}
 
-	RewardInterface struct {
+	SmallInterface struct {
+		row []*ProInterface{}
+	}
 
+	BigBonusInterface struct {
+		row []*ProInterface{}
+	}
+
+	ProInterface struct {
+		least float32
+		most float32
+		Pra int
 	}
 )
 
@@ -95,10 +111,29 @@ func (n *Normal)Exec() (ret *NormalReturn, err error) {
 	}
 
 	// 筹码设定
+	// Get current winning rate
 	if len := len(secondNormalPra); count >= len {
 		currentProbability := secondNormalPra[len - 1]
 	} else {
 		currentProbability := secondNormalPra[count - 1]
+	}
+
+	// Get current bonus multiple
+	currentLastCorns := singleUpper - singleGot
+	maxMultiple := currentLastCorns / (bet * line)
+
+	if maxMultiple < BigBonusInterface[0].least {
+		currentProbability.smallBonus += currentProbability.bigBonus
+	}
+
+	for _, value := range BigBonusInterface {
+		if value.least <= maxMultiple <= value.most {
+
+		}
+	}
+
+	for _, value := range SmallBonusInterface {
+
 	}
 
 	r := rand.New(rand.NewSource(99))
