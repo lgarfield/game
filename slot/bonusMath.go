@@ -1,7 +1,7 @@
 package slot
 
 import (
-
+	"math/rand"
 )
 
 type(
@@ -18,15 +18,26 @@ type(
 		// 奖金几率修正
 		BonusPra []*Probability
 
+		// Card's num probability
+		cardProbability []*CardProbability
+
 		// chip Slice
 		chipSlice []*ChipSlice
 	}
 
+	// base probability
 	BonusProbability struct {
 		bonus int
 		noBonus int
 	}
 
+	// The probability of cards'num
+	CardProbability struct {
+		num int
+		probability int
+	}
+
+	// Bonus / per goal
 	ChipSlice struct {
 		numbering int
 		amount int
@@ -57,7 +68,45 @@ func (b *Bonus)Exec() (ret *BonusReturn, err error) {
 
 	// Determine the bonus multiple
 	sec := rand.Intn(100)
+	nowPro := 0
+	for _, value := range b.cardProbability {
+		nowPro += value.probability
+		if sec < nowPro {
+			cardsNum := value.num
+			break
+		}
+	}
 
+	// Create the bonus player can get
+	bonusValue := combination(n.chipSlice, cardsNum)
+
+	if bonusValue > (b.bonusUpper - b.bonusGot) {
+		// no bonud
+		return
+	}
 
 	// 筹码设定
+	return
+}
+
+func combination(cs ChipSlice, num int) (re []*ChipSlice) {
+	if last := len(cs) - num; num >= last {
+		for ; num > 0; num-- {
+			i := len(cs)
+			r := rand.Intn(i)
+
+			re = append(re, cs[i])
+		}
+	} else {
+		for ; last > 0; last-- {
+			i := len(cs)
+			r := rand.Intn(i)
+
+			cs = append(cs[:r], cs[r+1:]...)
+		}
+
+		re = cs
+	}
+
+	return
 }

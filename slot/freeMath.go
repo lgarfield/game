@@ -74,8 +74,7 @@ func (f *Free)exec() (ret *FreeReturn, err error) {
 	}
 
 	// Determine the bonus multiple
-	sec := rand.Intn(100)
-	nowPro := 0
+	sec, nowPro := rand.Intn(100), 0
 	for _, value := range f.freeLoop {
 		nowPro += value.bonus
 		if sec < nowPro {
