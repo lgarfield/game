@@ -48,7 +48,7 @@ func (s *Skill)Exec() (ret *SkillReturn, err error) {
 	skillPercent := s.skillGot / s.skillUpper
 
 	for i := 0; i < len(s.skillPra); i++ {
-		if s.skillPra[i].percentMin <= skillPercent <= s.skillPra[i].percentMax {
+		if s.skillPra[i].percentMin <= skillPercent && skillPercent <= s.skillPra[i].percentMax {
 			s.skillProbability.bonus += s.skillPra[i].bonus
 			s.skillProbability.noBonus += s.skillPra[i].noBonus
 			break
@@ -63,10 +63,11 @@ func (s *Skill)Exec() (ret *SkillReturn, err error) {
 
 	// Determine the bonus multiple
 	sec, nowPro := rand.Intn(100), 0
-	for _, value := range.s.skillLoop {
+	var currentLoop *SkillLoop
+	for _, value := range s.skillLoop {
 		nowPro += value.bonus
 		if sec < nowPro {
-			currentLoop := value
+			currentLoop = value
 			break
 		}
 	}

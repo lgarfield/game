@@ -7,19 +7,19 @@ import (
 type(
 	Bonus struct {
 		// 奖金全局可赢取筹码上限
-		bonusUpper
+		bonusUpper int
 
 		// 奖金全局已赢取筹码
-		bonusGot
+		bonusGot int
 
 		// bonus win probability
 		bonusProbability *BonusProbability
 
 		// 奖金几率修正
-		BonusPra []*Probability
+		bonusPra []*Probability
 
 		// Card's num probability
-		cardProbability []*CardProbability
+		cardProbability []*BonusCardProbability
 
 		// chip Slice
 		chipSlice []*ChipSlice
@@ -32,7 +32,7 @@ type(
 	}
 
 	// The probability of cards'num
-	CardProbability struct {
+	BonusCardProbability struct {
 		num int
 		probability int
 	}
@@ -53,7 +53,7 @@ func (b *Bonus)Exec() (ret *BonusReturn, err error) {
 	bonusPercent := b.bonusGot / b.bonusUpper
 
 	for i := 0; i < len(b.bonusPra); i++ {
-		if b.bonusPra[i].percentMin <= bonusPercent <= b.bonusPra[i].percentMax {
+		if b.bonusPra[i].percentMin <= bonusPercent && bonusPercent <= b.bonusPra[i].percentMax {
 			b.bonusProbability.bonus += b.bonusPra[i].bonus
 			b.bonusProbability.noBonus += b.bonusPra[i].noBonus
 			break
@@ -67,20 +67,24 @@ func (b *Bonus)Exec() (ret *BonusReturn, err error) {
 	}
 
 	// Determine the bonus multiple
-	sec := rand.Intn(100)
-	nowPro := 0
+	sec, nowPro, cardsNum := rand.Intn(100), 0, 0
 	for _, value := range b.cardProbability {
 		nowPro += value.probability
 		if sec < nowPro {
-			cardsNum := value.num
+			cardsNum = value.num
 			break
 		}
 	}
 
 	// Create the bonus player can get
-	bonusValue := combination(n.chipSlice, cardsNum)
+	bonusValue := combination(b.chipSlice, cardsNum)
 
-	if bonusValue > (b.bonusUpper - b.bonusGot) {
+	lastAmount := 0
+	for _, val := range bonusValue {
+		lastAmount += val.amount
+	}
+
+	if lastAmount > (b.bonusUpper - b.bonusGot) {
 		// no bonud
 		return
 	}
@@ -89,11 +93,11 @@ func (b *Bonus)Exec() (ret *BonusReturn, err error) {
 	return
 }
 
-func combination(cs ChipSlice, num int) (re []*ChipSlice) {
+func combination(cs []*ChipSlice, num int) (re []*ChipSlice) {
 	if last := len(cs) - num; num >= last {
 		for ; num > 0; num-- {
 			i := len(cs)
-			r := rand.Intn(i)
+			//r := rand.Intn(i)
 
 			re = append(re, cs[i])
 		}

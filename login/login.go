@@ -1,35 +1,46 @@
 package login
 
 import (
-	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
+	//"net/rpc"
+	"net/rpc/jsonrpc"
+	"os"
 )
 
-func Solve(c *gin.Context) error {
-	var err error
-	method := c.PostForm("m")
-	switch method {
-	case "login":
-		err = login(c)
-	case "register":
-		err = register(c)
-	case "logout":
-		err = logout(c)
-	default:
-		err = errors.New("Invalid method...")
+type (
+	LoginRpc struct {
+		Username string `json:`
+		Passwd string `json:`
 	}
 
-	return err
-}
+	LoginReply struct {
+	}
+)
 
-func login(c *gin.Context) error {
-	return errors.New("Invalid method...")
-}
+func login(c *gin.Context) (re LoginReply, err error) {
+	// TODO - validate
 
-func register(c *gin.Context) error {
-	return errors.New("Invalid method...")
-}
 
-func logout(c *gin.Context) error {
-	return errors.New("Invalid method...")
+	if len(os.Args) != 2 {
+		// TODO error
+		fmt.Println("usage: ", os.Args[0], "server:port")
+		log.Fatal(1)
+	}
+	service := os.Args[1]
+
+	client, err := jsonrpc.Dial("tcp", service)
+	defer client.Close()
+	if err != nil {
+		return err
+	}
+
+	args := LoginRpc{}
+	err = client.Call("Login.Login", args, &re)
+	if err != nil {
+		return err
+	}
+
+	return
 }

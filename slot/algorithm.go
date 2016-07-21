@@ -8,13 +8,13 @@ type (
 	// 几率
 	Probability struct {
 		// 比例起始
-		percentMin uint8
+		percentMin int
 		// 比例终止
-		percentMax uint8
+		percentMax int
 		// wei中奖比率
-		noBonus int8
+		noBonus int
 		// 中奖比率
-		bonus int8
+		bonus int
 	}
 
 	Return interface {

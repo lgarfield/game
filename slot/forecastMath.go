@@ -46,7 +46,7 @@ func (f *Forecast)Exec() (ret *ForecastReturn, err error){
 	forecastPercent := f.forecastGot / f.forecastUpper
 
 	for i := 0; i < len(f.forecastPra); i++ {
-		if f.forecastPra[i].percentMin <= forecastPercent <= f.forecastPra[i].percentMax {
+		if f.forecastPra[i].percentMin <= forecastPercent && forecastPercent <= f.forecastPra[i].percentMax {
 			f.forecastProbability.bonus += f.forecastPra[i].bonus
 			f.forecastProbability.noBonus += f.forecastPra[i].noBonus
 			break
@@ -61,10 +61,11 @@ func (f *Forecast)Exec() (ret *ForecastReturn, err error){
 
 	// Determine the bonus multiple
 	sec, nowPro := rand.Intn(100), 0
+	var currentLoop *ForecastLoop
 	for _, value := range f.forecastLoop {
 		nowPro += value.bonus
 		if sec < nowPro {
-			currentLoop := value
+			currentLoop = value
 			break
 		}
 	}
